@@ -205,6 +205,12 @@ async function run() {
             const result = await productCollection.find({}).toArray();
             res.send(result);
         });
+        app.get('/products/:id', async (req, res) => {
+
+
+            const result = await productCollection.find({ category: req.params.id }).toArray();
+            res.send(result);
+        });
         app.get('/myproducts', verifyJWT, verifySeller, async (req, res) => {
             // req.userinfo._id 
             const query = { user: req.userinfo._id };
