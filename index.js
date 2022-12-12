@@ -130,8 +130,8 @@ async function run() {
         app.post('/orders', verifyJWT, verifyBuyer, async (req, res) => {
             const order = { ...req.body, user: req.userinfo._id };
             // console.log(order);
-            const product = await productCollection.find({ _id: ObjectId(req.body.product) })
-            console.log(req.body.product, product)
+            const product = await productCollection.findOne({ _id: ObjectId(req.body.product) });
+            // console.log(req.body.product, product)
             if (product) {
                 const filter = { _id: ObjectId(req.body.product) }
                 const updatedDoc = {
@@ -143,6 +143,7 @@ async function run() {
                 const updatedResult = await productCollection.updateOne(filter, updatedDoc)
 
                 const result = await ordersCollection.insertOne({ ...order, owner: product.user });
+                console.log(product.user, "product.user")
                 res.send(result);
             } else {
                 return res.status(403).send({ message: 'forbidden access' })
