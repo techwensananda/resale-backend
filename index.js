@@ -131,23 +131,28 @@ async function run() {
             const order = { ...req.body, user: req.userinfo._id };
             // console.log(order);
             const product = await productCollection.findOne({ _id: ObjectId(req.body.product) });
-            // console.log(req.body.product, product)
-            if (product) {
-                const filter = { _id: ObjectId(req.body.product) }
-                const updatedDoc = {
-                    $set: {
-                        payment: "paid",
-
-                    }
-                }
-                const updatedResult = await productCollection.updateOne(filter, updatedDoc)
-
-                const result = await ordersCollection.insertOne({ ...order, owner: product.user });
-                console.log(product.user, "product.user")
-                res.send(result);
+            if (product.payment == "paid") {
+                return res.status(403).send({ message: 'Already purchedsed this item' })
             } else {
-                return res.status(403).send({ message: 'forbidden access' })
+                if (product) {
+                    const filter = { _id: ObjectId(req.body.product) }
+                    const updatedDoc = {
+                        $set: {
+                            payment: "paid",
+
+                        }
+                    }
+                    const updatedResult = await productCollection.updateOne(filter, updatedDoc)
+
+                    const result = await ordersCollection.insertOne({ ...order, owner: product.user });
+                    console.log(product.user, "product.user")
+                    res.send(result);
+                } else {
+                    return res.status(403).send({ message: 'forbidden access' })
+                }
             }
+            // console.log(req.body.product, product)
+
             // TODO: make sure you do not enter duplicate order email
             // only insert orders if the order doesn't exist in the database
         });
