@@ -168,8 +168,8 @@ async function run() {
 
 
 
-        app.get('/jwt', async (req, res) => {
-            const email = req.query.email;
+        app.post('/jwt', async (req, res) => {
+            const email = req.body;
             const query = { email: email };
             const user = await usersCollection.findOne(query);
             if (user) {
