@@ -184,7 +184,7 @@ async function run() {
         });
 
         app.get('/verifyuser', verifyJWT, async (req, res) => {
-           
+
             const email = req.decoded?.email;
             const query = { email: email };
             const user = await usersCollection.findOne(query);
@@ -199,11 +199,14 @@ async function run() {
             }
         })
         app.get('/singleuserOrder', verifyJWT, async (req, res) => {
-           
+
             const email = req.decoded?.email;
             const query = { email: email };
-          
-            const result = await ordersCollection.find(query).toArray();
+
+
+            const user = await usersCollection.findOne(query);
+            console.log('user', user)
+            const result = await ordersCollection.find({ user: ObjectId(user._id) }).toArray();
             res.send(result);
         })
 
