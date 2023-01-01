@@ -169,17 +169,35 @@ async function run() {
 
 
         app.post('/jwt', async (req, res) => {
-            const email = req.body;
+            const email = req.body.email;
             const query = { email: email };
             const user = await usersCollection.findOne(query);
+            console.log(email, user);
             if (user) {
                 const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
                 return res.send({ accessToken: token, user });
             }
-            res.status(403).send({ accessToken: '' })
+            else {
+
+                res.status(403).send({ accessToken: '' })
+            }
         });
 
+        app.get('/verifyuser', verifyJWT, async (req, res) => {
+           
+            const email = req.decoded?.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            console.log(email, user);
+            if (user) {
+                const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
+                return res.send({ accessToken: token, user });
+            }
+            else {
 
+                res.status(403).send({ accessToken: '' })
+            }
+        })
 
         app.get('/category', async (req, res) => {
 
