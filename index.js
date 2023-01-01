@@ -198,6 +198,14 @@ async function run() {
                 res.status(403).send({ accessToken: '' })
             }
         })
+        app.get('/singleuserOrder', verifyJWT, async (req, res) => {
+           
+            const email = req.decoded?.email;
+            const query = { email: email };
+          
+            const result = await ordersCollection.find(query).toArray();
+            res.send(result);
+        })
 
         app.get('/category', async (req, res) => {
 
